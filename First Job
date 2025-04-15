@@ -1,0 +1,153 @@
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
+import pandas as pd
+
+# Sample data (replace with actual spreadsheet reading)
+# Since I can't access the file directly, I'm using the provided data as a list
+data = [
+    {
+        "Pain Points": "invoices being classified incorrectly as not an invoice",
+        "Favorites": "Moves quickly",
+        "Upgrades": "Automatically have dates populated"
+    },
+    {
+        "Pain Points": "Too much clicking needed to get where we need to go",
+        "Favorites": "works well in ingonito",
+        "Upgrades": "highlight the voucher in the bar, have voucher in Qmapping if available, have date -one year in advance already default, have favorites together so we can move faster"
+    },
+    {
+        "Pain Points": "-Having to constantly reopen or work incognito - makes it hard when we are on the phone with people\n-not picking up the PO that is on the invoice\n-not picking up invoices that it thinks aren't invoices from the mailbox\n-having to fix every line -takes too much time when on the phone\n-system not knowing which vendors are the same or doing business as-putting invoices in a vendor mismatch",
+        "Favorites": "when the system works-it is very fast",
+        "Upgrades": "-once a human re routes an invoice, that it goes through, not back into a different que\n-have the system find invoices from any date/ not have to put the dates in\n-needs to stay open for at least half the day, not just an hour or so"
+    },
+    {
+        "Pain Points": "I have none as of today",
+        "Favorites": "I love being able to easily access",
+        "Upgrades": "None"
+    },
+    {
+        "Pain Points": "I see an improvement from PC, the invoice vetting that is rejecting too many invoices and naming duplicates",
+        "Favorites": "It is more fluid to work with than PC, we have the ability to view prior steps before we take any to move and correct",
+        "Upgrades": "Seeing who sent the original invoice in time/date stamp.. Sending out auto replies to all vendors who are still writing on invoices that this is not acceptable with an attached supplier invoice"
+    },
+    {
+        "Pain Points": "The date range won't populate on the first try and the time it takes to load.",
+        "Favorites": "Fairly user friendly.",
+        "Upgrades": "Date selections on the first try and increase speed."
+    },
+    {
+        "Pain Points": "It's still spinning when there is no invoices, causing me to close out the tab instead of showing that no invoices are there.",
+        "Favorites": "Easy to navigate through.",
+        "Upgrades": "None at this time."
+    },
+    {
+        "Pain Points": "How fast it times out and not being able to find invoices that show duplicate after emailing a second or third time.",
+        "Favorites": "You can see the invoices in detail and change them quickly for processing.",
+        "Upgrades": "Uploading invoices that can be pulled quickly without duplicates; it hinders processing time."
+    }
+]
+
+# Uncomment to read from actual spreadsheet
+# df = pd.read_excel("TP Flow Review (Responses).xlsx")
+# data = df.to_dict(orient="records")
+
+# Initialize presentation
+prs = Presentation()
+
+# Helper function to add a slide with title and bullet points
+def add_slide_with_bullets(layout, title_text, bullets):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    title_shape = shapes.title
+    title_shape.text = title_text
+    
+    # Add text box for bullets
+    left = Inches(0.5)
+    top = Inches(1.5)
+    width = Inches(9)
+    height = Inches(5)
+    text_box = shapes.add_textbox(left, top, width, height)
+    text_frame = text_box.text_frame
+    text_frame.word_wrap = True
+    
+    for bullet in bullets:
+        p = text_frame.add_paragraph()
+        p.text = bullet
+        p.level = 0
+        p.font.size = Pt(18)
+        p.alignment = PP_ALIGN.LEFT
+
+# Slide 1: Title Slide
+slide_layout = prs.slide_layouts[0]  # Title slide layout
+slide = prs.slides.add_slide(slide_layout)
+title = slide.shapes.title
+subtitle = slide.placeholders[1]
+title.text = "TP Flow Review: User Feedback Summary"
+subtitle.text = "Insights on Pain Points, Favorites, and Suggested Upgrades\nApril 15, 2025"
+
+# Slide 2: Overview
+slide_layout = prs.slide_layouts[1]  # Title and content layout
+add_slide_with_bullets(slide_layout, "Overview", [
+    "This presentation summarizes feedback from 8 users on the TP Flow system, covering:",
+    "- Pain Points",
+    "- Favorite Features",
+    "- Suggested Interface Upgrades"
+])
+
+# Slide 3: Pain Points - Invoice Processing
+add_slide_with_bullets(slide_layout, "Pain Points: Invoice Processing", [
+    "Invoices misclassified as non-invoices (2 responses)",
+    "System fails to detect POs on invoices",
+    "Duplicate invoice detection issues after multiple emails"
+])
+
+# Slide 4: Pain Points - System Usability
+add_slide_with_bullets(slide_layout, "Pain Points: Usability", [
+    "Too much clicking to navigate (1 response)",
+    "Constant timeouts requiring incognito mode or reopening (2 responses)",
+    "Spinning/loading when no invoices are present",
+    "Slow loading and date range not populating on first try"
+])
+
+# Slide 5: Pain Points - Vendor and Data Handling
+add_slide_with_bullets(slide_layout, "Pain Points: Vendor & Data Issues", [
+    "System struggles to match vendors (e.g., 'doing business as' mismatches)",
+    "Manual fixes required for every line, slowing phone interactions"
+])
+
+# Slide 6: Favorite Aspects
+add_slide_with_bullets(slide_layout, "What Users Love", [
+    "Fast performance when working correctly (3 responses)",
+    "User-friendly and easy to navigate (2 responses)",
+    "Detailed invoice views with quick edits (1 response)",
+    "Fluid workflow with visibility of prior steps (1 response)"
+])
+
+# Slide 7: Suggested Upgrades - Automation & Defaults
+add_slide_with_bullets(slide_layout, "Upgrades: Automation & Defaults", [
+    "Auto-populate dates, default to -1 year (2 responses)",
+    "Fix date selection on first try",
+    "Auto-route invoices after human correction, avoiding re-queue",
+    "Auto-replies to vendors for invalid invoices"
+])
+
+# Slide 8: Suggested Upgrades - Interface & Speed
+add_slide_with_bullets(slide_layout, "Upgrades: Interface & Speed", [
+    "Highlight vouchers in the bar, add to Qmapping",
+    "Group favorite actions for faster access",
+    "Extend session timeout to half a day",
+    "Show 'no invoices' instead of spinning",
+    "Faster invoice uploads without duplicates"
+])
+
+# Slide 9: Conclusion & Next Steps
+add_slide_with_bullets(slide_layout, "Moving Forward", [
+    "Users value speed and ease but face challenges with misclassification, timeouts, and manual fixes",
+    "Prioritize: Better invoice detection, longer sessions, and automated defaults",
+    "Next Steps: Review upgrades for feasibility and timeline"
+])
+
+# Save the presentation
+prs.save("TP_Flow_Review_Slideshow.pptx")
+print("Slideshow created successfully as 'TP_Flow_Review_Slideshow.pptx'")
